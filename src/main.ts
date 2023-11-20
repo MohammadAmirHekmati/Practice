@@ -1,23 +1,29 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import {ConfigService} from "@nestjs/config";
-import {SwaggerService} from "./configuration/swagger/swagger.service";
 import * as basicAuth from 'express-basic-auth'
+import { Logger } from '@nestjs/common';
+import { AppConfigService, SwaggerConfigService } from './Configs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const configService=app.get<ConfigService>(ConfigService)
-  app.setGlobalPrefix(configService.get("app.globalApiPrefix"))
-    app.use([`/${configService.get("swagger.prefix")}`],
-        basicAuth({
-            challenge: true,
-            users: { 'test': '123456' },
-        }));
-  const swaggerService=app.get<SwaggerService>(SwaggerService)
-      swaggerService.initialize(app)
-  await app.listen(configService.get("app.runningPort")).then(()=>{
-    console.log(`App is Running : http://localhost:${configService.get("app.runningPort")}/${configService.get("app.globalApiPrefix")}`)
-    console.log(`Swagger is enabled : http://localhost:${configService.get("app.runningPort")}/${configService.get("swagger.prefix")}`)
+
+  const appConfig = app.get<AppConfigService>(AppConfigService)
+  app.setGlobalPrefix(appConfig.apiGlobalPrefix)
+
+  const swaggerConfig = app.get<SwaggerConfigService>(SwaggerConfigService)
+  app.use([`/${swaggerConfig.prefix}`],
+    basicAuth({
+      challenge: true,
+      users: { 'test': '123456' },
+    }));
+
+  if (appConfig.mode == 'developer') {
+    swaggerConfig.initialize(app);
+  }
+
+  await app.listen(appConfig.port).then(() => {
+    Logger.log(`🚀 App is Running on: http://localhost:${appConfig.port}/${appConfig.apiGlobalPrefix}`);
+    Logger.log(`🚀 Swagger is Running on: http://localhost:${appConfig.port}/${swaggerConfig.prefix}`);
   });
 }
 bootstrap();
