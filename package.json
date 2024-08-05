@@ -23,17 +23,21 @@
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.0.0",
+    "@nestjs/jwt": "^10.2.0",
     "@nestjs/mongoose": "^10.0.2",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^7.1.16",
     "@nestjs/typeorm": "^10.0.1",
     "express-basic-auth": "^1.2.1",
+    "helmet": "^7.1.0",
     "mongoose": "^8.0.1",
     "pg": "^8.11.3",
-    "redis": "^4.6.10",
+    "redis": "^4.7.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
-    "typeorm": "^0.3.17"
+    "typeorm": "^0.3.17",
+    "ua-parser-js": "^1.0.38",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

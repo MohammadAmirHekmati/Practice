@@ -22,6 +22,8 @@ export class RedisModule {
                     const client = await createClient({url:`redis://${host}:${port}`})
                         .on('error', err => console.log('Redis Client Error', err))
                         .connect();
+
+                        return client
                 }},RedisService
 
             ],

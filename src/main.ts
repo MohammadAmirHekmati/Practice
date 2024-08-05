@@ -3,10 +3,27 @@ import { AppModule } from './app.module';
 import {ConfigService} from "@nestjs/config";
 import {SwaggerService} from "./configuration/swagger/swagger.service";
 import * as basicAuth from 'express-basic-auth'
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService=app.get<ConfigService>(ConfigService)
+
+  // جلوگیری از اجرا شدن اسکریپت ها ازدامین دیگر
+  helmet.contentSecurityPolicy({directives:{
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'"],
+  }})
+
+  // از آی فریم شدن سایت در بقیه دامین ها جلوگیری میکند
+  helmet.xFrameOptions({action:"deny"})
+
+  //جلوگیری از اجرای dns
+  helmet.dnsPrefetchControl({allow:false})
+
+  app.use(helmet)
+
+
   app.setGlobalPrefix(configService.get("app.globalApiPrefix"))
     app.use([`/${configService.get("swagger.prefix")}`],
         basicAuth({
